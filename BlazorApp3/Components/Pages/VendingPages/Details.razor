@@ -1,0 +1,60 @@
+﻿@page "/vendings/details"
+@using Microsoft.EntityFrameworkCore
+@using BlazorApp3.Data
+@inject IDbContextFactory<BlazorApp3.Data.VseRoss2DbContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Details</PageTitle>
+
+<h1>Details</h1>
+
+<div>
+    <h2>Vending</h2>
+    <hr />
+    @if (vending is null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else {
+        <dl class="row">
+            <dt class="col-sm-2">Place</dt>
+            <dd class="col-sm-10">@vending.Place</dd>
+            <dt class="col-sm-2">Address</dt>
+            <dd class="col-sm-10">@vending.Address</dd>
+            <dt class="col-sm-2">ModelId</dt>
+            <dd class="col-sm-10">@vending.ModelId</dd>
+            <dt class="col-sm-2">TypeId</dt>
+            <dd class="col-sm-10">@vending.TypeId</dd>
+            <dt class="col-sm-2">StatusId</dt>
+            <dd class="col-sm-10">@vending.StatusId</dd>
+            <dt class="col-sm-2">DateInstall</dt>
+            <dd class="col-sm-10">@vending.DateInstall</dd>
+            <dt class="col-sm-2">ModemId</dt>
+            <dd class="col-sm-10">@vending.ModemId</dd>
+            <dt class="col-sm-2">CompanyId</dt>
+            <dd class="col-sm-10">@vending.CompanyId</dd>
+        </dl>
+        <div>
+            <a href="@($"/vendings/edit?id={vending.Id}")">Edit</a> |
+            <a href="@($"/vendings")">Back to List</a>
+        </div>
+    }
+</div>
+
+@code {
+    private Vending? vending;
+
+    [SupplyParameterFromQuery]
+    private int Id { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        vending = await context.Vendings.FirstOrDefaultAsync(m => m.Id == Id);
+
+        if (vending is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+}

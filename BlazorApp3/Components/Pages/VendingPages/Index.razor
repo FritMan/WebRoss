@@ -1,0 +1,61 @@
+﻿@page "/vendings"
+@using Microsoft.EntityFrameworkCore
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using BlazorApp3.Data
+@using BlazorApp3.Data
+@implements IAsyncDisposable
+@inject IDbContextFactory<BlazorApp3.Data.VseRoss2DbContext> DbFactory
+@rendermode InteractiveServer
+
+<PageTitle>Торговые автоматы</PageTitle>
+
+<h1>Тогрговые автоматы</h1>
+
+<select @bind="Pagination.ItemsPerPage">
+    <option>1</option>
+    <option>5</option>
+    <option>10</option>
+</select>
+
+<input placeholder="Фильтр" @bind="filter" @bind:event="oninput"/>
+
+<button title="Плитка" />
+<button title="Таблица" />
+
+<QuickGrid Class="table" Items="@Items" Pagination="@Pagination">
+    <PropertyColumn Property="vending => vending.Id" title="Id"/>
+    <PropertyColumn Property="vending => vending.Model.Mark.Name" title="Название" />
+    <PropertyColumn Property="vending => vending.Model.Name" title="Модель" />
+    <PropertyColumn Property="vending => vending.Company.Name" title="Компания" />
+    <PropertyColumn Property="vending => vending.Modem.Name" title="Модем" />
+    <PropertyColumn Property="vending => vending.AdressAndPlace" title="Адресс/Место" />
+    <PropertyColumn Property="vending => vending.DateInstall" title="В работе с" />
+
+    <TemplateColumn Context="vending" title="Действия">
+        <a href="@($"vendings/edit?id={vending.Id}")">Изменить</a> |
+        <a href="@($"vendings/details?id={vending.Id}")">Детали</a> |
+        <a href="@($"vendings/delete?id={vending.Id}")">Удалить</a>
+    </TemplateColumn>
+</QuickGrid>
+
+<Paginator State="Pagination"/>
+
+@code {
+
+    PaginationState Pagination = new PaginationState {ItemsPerPage = 1};
+
+    string filter = "";
+    IQueryable<Vending> Items => context.Vendings.Where(el => el.Company.Name.Contains(filter)).AsQueryable();
+    private VseRoss2DbContext context = default!;
+
+    protected override void OnInitialized()
+    {
+        context = DbFactory.CreateDbContext();
+        context.Modems.Load();
+        context.Models.Load();
+        context.Companies.Load();
+        context.Marks.Load();
+    }
+
+    public async ValueTask DisposeAsync() => await context.DisposeAsync();
+}
