@@ -25,8 +25,21 @@
 <QuickGrid Class="table" Items="items" Pagination="Pagination">
     <PropertyColumn Property="product => product.Name" title="Название"/>
     <PropertyColumn Property="product => product.Unit.Name" title="Ед.изм." />
-    <PropertyColumn Property="product => product.InStac" title="Стационарные" />
-    <PropertyColumn Property="product => product.InMob" title="Мобильные" />
+    <TemplateColumn Title="Остатки на складах">
+        <HeaderTemplate>
+            <div class="text-center">
+                Остатки на складах
+                <hr width="200" size="5" />
+                <div class="text-center">
+                    Стационарных&nbsp;Мобильных
+                </div>
+            </div>
+        </HeaderTemplate>
+        <ChildContent>
+            <div class="text-center">@context.InStac&nbsp;@context.InMob</div>
+        </ChildContent>
+    </TemplateColumn>
+
     <PropertyColumn Property="product => product.All" title="Итого" />
 
 </QuickGrid>
