@@ -14,6 +14,7 @@
 @inject ILogger<Register> Logger
 @inject NavigationManager NavigationManager
 @inject IdentityRedirectManager RedirectManager
+@rendermode InteractiveServer
 
 <PageTitle>Регистрация</PageTitle>
 
@@ -67,6 +68,14 @@
                 <label for="email">Ответ на CAPTHCA</label>
                 <ValidationMessage For="() => Input.Email" class="text-danger" />
             </div>
+
+            <div>
+                <label>Captha</label>
+                <label>@Captha</label>
+            </div>
+            <div>
+                <input type="button" value="Сгенирировать капчу" @onclick=RenewCaptha/>
+            </div>
             <button type="submit" class="w-100 btn btn-lg btn-primary">Зарегистрироваться</button>
         </EditForm>
     </div>
@@ -82,6 +91,14 @@
     private string? ReturnUrl { get; set; }
 
     private string? Message => identityErrors is null ? null : $"Error: {string.Join(", ", identityErrors.Select(error => error.Description))}";
+
+    public string Captha = Random.Shared.GetItems<string>(Program.Capthas.ToArray(), 1)[0];
+
+
+    public void RenewCaptha()
+    {
+        Captha = Random.Shared.GetItems<string>(Program.Capthas.ToArray(), 1)[0];
+    }
 
     public async Task RegisterUser(EditContext editContext)
     {

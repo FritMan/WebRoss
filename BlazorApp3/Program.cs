@@ -9,8 +9,30 @@ namespace BlazorApp3
 {
     public class Program
     {
+        public static List<string> Capthas = new List<string>();
+
+        private static void GenerateCapthas()
+        {
+            for(int i = 1000; i<10000; i++)
+            {
+                bool flag = true;
+                for(int j = 2;j < i; j++)
+                {
+                    if(i % j == 0)
+                    {
+                        flag = false;
+                        break;
+                    }
+                }
+                if (flag) 
+                {
+                    Capthas.Add(i.ToString());
+                }
+            }
+        }
         public static void Main(string[] args)
         {
+            GenerateCapthas();
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
